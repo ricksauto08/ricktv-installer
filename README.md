@@ -34,7 +34,8 @@ The bootstrap does not install Docker automatically.
 - Git and GitHub CLI; missing prerequisites are installed through apt during a
   normal installation. Install `curl` first if your OS does not include it.
 - Native mode needs systemd. Raspberry Pi 4B with 4 GB RAM is a test target;
-  physical ARM installation/playback validation is still pending. Camera
+  a clean native install on Pi 4B / 4 GB / 32 GB SD / Trixie passed service
+  startup and health checks. Provider playback and recording are not yet verified. Camera
   multiview and software video conversion may exceed a Pi's practical capacity.
 
 This creates an empty installation in `/opt/ricktv`. It does not restore saved
@@ -77,8 +78,9 @@ services or access private source.
 Validation: shell syntax and 13 isolated bootstrap regression tests passed,
 including piped input with terminal sign-in, both install modes, failed login,
 failed download, failed installation, IP validation and existing-server guards.
-These checks validate the bootstrap; a complete installation on the Pi is the
-next hardware test.
+A complete fresh native installation on a Pi 4B has also passed service startup
+and health checks. This does not establish authenticated playback, recording,
+camera feeds, backup restoration or sustained multiview performance.
 
 ### DNS-permission repair
 
