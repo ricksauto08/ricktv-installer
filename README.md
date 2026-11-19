@@ -91,3 +91,9 @@ refreshes DNS permissions when resuming. If an initial install stopped with DNS
 errors, update the retained private checkout and use its exact-configuration
 `--resume` instructions; do not erase the partial installation. All 13 bootstrap
 regression tests pass, including the permission handoff.
+
+## Private automatic backups
+
+The current private RickTV package includes **8099 > Backups > Private GitHub backups** for native Linux and Docker. After installation it tries to connect the installing user's existing GitHub login to the private RickTv repository. Each server has its own history, upload verification and new-box restore instructions. Recordings are excluded. Confirm **Last verified GitHub upload** in 8099; a local backup alone is not an off-machine copy.
+
+This public repository contains only the bootstrap and instructions. No private backup, application account or token is uploaded here.
