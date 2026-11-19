@@ -45,7 +45,10 @@ elif name=='git':
    (root/wrapper).write_text('#!/bin/sh\nprintf "MOCK PRIVATE INSTALLER %s\\n" "$*"\nexit "${TEST_INSTALL_FAILURE:-0}"\n')
  else:print('test-revision')
 elif name=='docker':print(os.getenv('TEST_COMPOSE','2.30.0'))
-elif name=='sudo':os.execvp(args[0],args)
+elif name=='sudo':
+ mask=os.umask(0);os.umask(mask)
+ assert mask==0o022,'Private download mask leaked into system installer'
+ os.execvp(args[0],args)
 '''
 
 class BootstrapTests(unittest.TestCase):

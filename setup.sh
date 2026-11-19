@@ -118,6 +118,9 @@ except (ValueError,AssertionError,OSError): sys.exit(1)' "$server_ip" || die 'Th
     fi
     terminal
     say 'Starting the private installer. It checks ports, disk space and existing services before installing.'
+    # Keep checkout/summary private, but do not apply private file defaults to
+    # system software, resolver files or device nodes created by the installer.
+    umask 022
     if ! sudo bash "$source_dir/$entry" --server-ip "$server_ip" <&3; then
         say "Installation did not finish. Source and summary are retained in $download_dir"
         die 'Do not erase the install directory or repeat as a fresh install. See the private install/README.md for exact-configuration resume instructions.'

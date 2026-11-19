@@ -79,3 +79,13 @@ including piped input with terminal sign-in, both install modes, failed login,
 failed download, failed installation, IP validation and existing-server guards.
 These checks validate the bootstrap; a complete installation on the Pi is the
 next hardware test.
+
+### DNS-permission repair
+
+The initial bootstrap could pass its private-download file defaults to the
+system installer. This is corrected: downloads and summaries stay private,
+while system installation gets normal file defaults. The private installer also
+refreshes DNS permissions when resuming. If an initial install stopped with DNS
+errors, update the retained private checkout and use its exact-configuration
+`--resume` instructions; do not erase the partial installation. All 13 bootstrap
+regression tests pass, including the permission handoff.
