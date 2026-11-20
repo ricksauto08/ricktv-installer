@@ -103,6 +103,14 @@ except (ValueError,AssertionError,OSError): sys.exit(1)' "$server_ip" || die 'Th
         die "Download failed. No RickTV services were installed. Temporary directory: $download_dir"
     fi
     source_dir=$download_dir/source
+    # New servers install the same reviewed stable commit as existing servers.
+    # The channel reference lives only in private Git; backup releases are ignored.
+    stable_commit=$(python3 -c 'import json,re,sys
+p=json.load(open(sys.argv[1]))
+assert p.get("schema")==1 and re.fullmatch("[0-9a-f]{40}",p.get("commit","")), "Invalid stable release"
+print(p["commit"])' "$source_dir/releases/server-stable.json") || die 'No valid stable server release is available.'
+    git -C "$source_dir" -c credential.helper= -c 'credential.helper=!gh auth git-credential' fetch --depth 1 origin "$stable_commit" || die 'Stable release download failed.'
+    git -C "$source_dir" checkout --detach "$stable_commit" || die 'Could not select the stable release.'
     case "$mode" in native) entry=install-linux.sh ;; docker) entry=install-docker.sh ;; esac
     [ -f "$source_dir/$entry" ] && [ -f "$source_dir/install/install.py" ] || die 'The private repository is missing its installer.'
     revision=$(git -C "$source_dir" rev-parse HEAD)

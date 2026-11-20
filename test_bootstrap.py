@@ -41,6 +41,8 @@ elif name=='git':
   if os.getenv('TEST_CLONE_FAILURE'):sys.exit(1)
   root=pathlib.Path(args[-1]);(root/'install').mkdir(parents=True)
   (root/'install/install.py').write_text('# fake private installer\n')
+  (root/'releases').mkdir()
+  (root/'releases/server-stable.json').write_text(json.dumps({'schema':1,'commit':'invalid' if os.getenv('TEST_BAD_STABLE') else 'a'*40}))
   for wrapper in ['install-linux.sh','install-docker.sh']:
    (root/wrapper).write_text('#!/bin/sh\nprintf "MOCK PRIVATE INSTALLER %s\\n" "$*"\nexit "${TEST_INSTALL_FAILURE:-0}"\n')
  else:print('test-revision')
@@ -108,6 +110,13 @@ class BootstrapTests(unittest.TestCase):
         summaries=list(self.home.glob('ricktv-setup.*/SETUP-SUMMARY.txt'))
         self.assertEqual(len(summaries),1)
         self.assertEqual(summaries[0].stat().st_mode & 0o777,0o600)
+
+    def test_stable_commit_selected_before_install(self):
+        code,out=self.run_setup('--mode','native','--server-ip',self.ip,'--plan')
+        self.assertEqual(code,0,out)
+        self.assertTrue(any('checkout' in c and '--detach' in c and 'a'*40 in c for c in self.commands()))
+        code,out=self.run_setup('--mode','native','--server-ip',self.ip,'--plan',TEST_BAD_STABLE='1')
+        self.assertNotEqual(code,0,out)
 
     def test_docker_selection(self):
         code,out=self.run_setup('--mode','docker','--server-ip',self.ip)
